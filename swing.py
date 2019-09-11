@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import html
 import os
 import sys
@@ -13,6 +16,10 @@ settings.configure(
     DEBUG=(os.environ.get("DEBUG", "") == "1"),
     ALLOWED_HOSTS=["*"],  # Disable host header validation
     ROOT_URLCONF=__name__,  # Make this module the urlconf
+    DATABASES = { 'default': {
+      'ENGINE': 'django.db.backends.sqlite3',
+      'NAME': 'database.db',
+    }}
 )
 
 def index(request):

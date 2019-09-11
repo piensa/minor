@@ -1,5 +1,5 @@
-0.0.0.0:2015
-on startup daphne sample:application &
+0.0.0.0:80
+on startup daphne swing:application &
 
 header / {
     Referrer-Policy "same-origin"

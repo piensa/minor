@@ -1,6 +1,6 @@
 let
-    pkgs = import <nixpkgs> {};
-    piensa = import (builtins.fetchTarball {
+   pkgs = import <nixpkgs> {};
+   piensa = import (builtins.fetchTarball {
       url = https://github.com/piensa/nur-packages/archive/3866b8b.tar.gz;
       sha256="10ynr4988b8153j0pb6fxjwc00x165dc0lrhyx9h4w59p83rcv2d";
     }) {};

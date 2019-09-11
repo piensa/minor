@@ -11,6 +11,7 @@ in let
    autobahn = pkgs.python37Packages.autobahn;
    twisted = pkgs.python37Packages.twisted;
    service-identity = pkgs.python37Packages.service-identity;
+   gdal = pkgs.gdal.override { pythonPackages=pkgs.python37Packages; };
    asgiref = pkgs.python37Packages.asgiref.overrideAttrs (old: rec {
      name = "asgiref_${version}";
      version = "3.2.2";
@@ -61,10 +62,10 @@ in let
     errors stdout
    '';
 in pkgs.dockerTools.buildLayeredImage {
-  name = "piensa/swing";
+  name = "piensa/minor";
   created = "now";
-  contents = [ caddy daphne django piensa.tippecanoe pkgs.gdal pkgs.coreutils ];
-  config.Entrypoint = [ "${pkgs.caddy}/bin/caddy" ];
-  config.Cmd = [ "-conf" "${caddyfile}" ];
-  maxLayers = 50;
+  contents = [ caddy daphne django gdal pytz sqlparse piensa.tippecanoe pkgs.python37 pkgs.coreutils pkgs.bash ];
+  config.Env = [ "PYTHONPATH=$PYTHONPATH:/lib/python3.7/site-packages:/" ];
+  config.Cmd = [ "${pkgs.caddy}/bin/caddy" "-conf" "${caddyfile}" ];
+  maxLayers = 3;
 }
