@@ -2,17 +2,18 @@
 on startup daphne swing:application &
 
 header / {
-    Referrer-Policy "same-origin"
-    X-XSS-Protection "1; mode=block"
-    X-Content-Type-Options "nosniff"
-    X-Frame-Options "DENY"
-    -Server
+  Referrer-Policy "same-origin"
+  X-XSS-Protection "1; mode=block"
+  X-Content-Type-Options "nosniff"
+  X-Frame-Options "DENY"
+  -Server
 }
 
+
 proxy / localhost:8000 {
-    transparent
-    websocket
-    except /static
+  transparent
+  websocket
+  except /static
 }
 
 limits 750000000
