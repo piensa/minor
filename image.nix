@@ -1,11 +1,17 @@
 let
-   pkgs = import <nixpkgs> {};
+   pkgs = import (builtins.fetchTarball {
+      url = "https://github.com/nixos/nixpkgs/archive/release-19.03.tar.gz";
+      sha256="0ldaca2jj9jzmbw7ss4448hlhyj27q1887ngzzpslyal30pc1k9h";
+   }) {};
    piensa = import (builtins.fetchTarball {
       url = https://github.com/piensa/nur-packages/archive/3866b8b.tar.gz;
       sha256="10ynr4988b8153j0pb6fxjwc00x165dc0lrhyx9h4w59p83rcv2d";
     }) {};
 in let
+   coreutils = pkgs.coreutils;
+   bash = pkgs.bash;
    caddy = piensa.caddy;
+   tippecanoe = piensa.tippecanoe;
    pytz = pkgs.python37Packages.pytz;
    sqlparse = pkgs.python37Packages.sqlparse;
    autobahn = pkgs.python37Packages.autobahn;
@@ -46,7 +52,7 @@ in let
         sha256 = "0ikphn1a2mhr4z7r939makkvybp1sczc7wiphy5qa2385jrfcz78";
       };
    });
-   caddyfile = pkgs.writeText "Caddyfile" ''
+  caddyfile = pkgs.writeText "Caddyfile" ''
     0.0.0.0:2015
 
     header / {
@@ -64,8 +70,24 @@ in let
 in pkgs.dockerTools.buildLayeredImage {
   name = "piensa/minor";
   created = "now";
-  contents = [ caddy daphne django gdal pytz sqlparse piensa.tippecanoe pkgs.python37 pkgs.coreutils pkgs.bash ];
-  config.Env = [ "PYTHONPATH=$PYTHONPATH:/lib/python3.7/site-packages:/" ];
-  config.Cmd = [ "${pkgs.caddy}/bin/caddy" "-conf" "${caddyfile}" ];
+  contents = [
+   # Proxy
+   caddy
+
+   # Python
+   pkgs.python37
+   django pytz sqlparse
+   daphne
+
+   # GIS
+   gdal
+   tippecanoe
+
+   # Development
+   coreutils
+   bash
+  ];
+  config.Env = [ "PYTHONPATH=$PYTHONPATH:/lib/python3.7/site-packages" "PATH=$PATH:/bin" ];
+  config.Cmd = [ "${caddy}/bin/caddy" "-conf" "${caddyfile}" ];
   maxLayers = 3;
 }

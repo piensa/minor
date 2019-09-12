@@ -1,16 +1,23 @@
 let
-   pkgs = import <nixpkgs> {};
+   pkgs = import (builtins.fetchTarball {
+      url = "https://github.com/nixos/nixpkgs/archive/release-19.03.tar.gz";
+      sha256="0ldaca2jj9jzmbw7ss4448hlhyj27q1887ngzzpslyal30pc1k9h";
+   }) {};
    piensa = import (builtins.fetchTarball {
       url = https://github.com/piensa/nur-packages/archive/3866b8b.tar.gz;
       sha256="10ynr4988b8153j0pb6fxjwc00x165dc0lrhyx9h4w59p83rcv2d";
     }) {};
 in let
+   coreutils = pkgs.coreutils;
+   bash = pkgs.bash;
    caddy = piensa.caddy;
+   tippecanoe = piensa.tippecanoe;
    pytz = pkgs.python37Packages.pytz;
    sqlparse = pkgs.python37Packages.sqlparse;
    autobahn = pkgs.python37Packages.autobahn;
    twisted = pkgs.python37Packages.twisted;
    service-identity = pkgs.python37Packages.service-identity;
+   gdal = pkgs.gdal.override { pythonPackages=pkgs.python37Packages; };
    asgiref = pkgs.python37Packages.asgiref.overrideAttrs (old: rec {
      name = "asgiref_${version}";
      version = "3.2.2";
@@ -48,10 +55,23 @@ in let
 in pkgs.stdenv.mkDerivation rec {
   name = "swing";
   buildInputs = [
-    django
-    daphne
-    caddy
-  ];
+   # Proxy
+   caddy
+
+   # Python
+   pkgs.python37
+   django pytz sqlparse
+   daphne
+
+   # GIS
+   gdal
+   tippecanoe
+
+   # Development
+   coreutils
+   bash
+   ];
+
   shellHooks = ''
   '';
 }

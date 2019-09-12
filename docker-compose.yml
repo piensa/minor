@@ -2,17 +2,16 @@ version: "3.7"
 services:
   swing:
     restart: always
-    image: piensa/minor:04z7lc0rv7pdd2gk921q6sa0r477qcyp
+    image: piensa/minor:9zs7l9by04s378q6lzxppf15743jk6qw
     volumes:
       - ./swing.py:/lib/python3.7/site-packages/swing.py
       - ./Caddyfile:/Caddyfile
       - ./static:/static
     networks:
       - web
-    command: caddy -port 80 -conf /Caddyfile
+    command: caddy -conf /Caddyfile
     ports:
-      - "80:80"
-      - "443:443"
+      - "2015:2015"
     environment:
       - DJANGO_SETTINGS_MODULE=swing.settings
 networks:           
